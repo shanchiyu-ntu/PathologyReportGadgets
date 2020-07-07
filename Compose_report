@@ -1,0 +1,629 @@
+# LaziU (懶惰老尤) General Biopsy Report Gadget
+
+print ("LaziU (懶惰老尤)\n懶是人類改變世界的動力........我懶我驕傲\nAlpha.9")
+
+
+# output functions
+def size (sza=[]):
+  print ("%.1f x %.1f x %.1f cm. in size"%(sza[0],sza[1],sza[2]),end="",file=f)
+def frg1 (fx1,k):
+  print ("one tissue fragment measuring",end=" ", file=f)
+  size(sz[k])
+  print ("%s."%fx1, end=" ",file=f)
+def frga (fx1,k):
+  print ("%s tissue fragments measuring up to" %frgn[k],end=" ",file=f)
+  size(sz[k])
+  print ("%s."%fx1, end=" ",file=f)
+def frgb (fx1,k):
+  print ("%s tissue fragments measuring" %frgn[k],end=" ",file=f)
+  size(sz[k])    
+  print (" in aggregate%s. "%fx1, end="",file=f)
+
+
+def allthesame (a,b,i):
+  if i==1:
+    for j in range (b-1):
+      a.append(a[0])
+
+def qsame (c):
+  b= input ("!: all the bottles are identical 每罐都一樣? (enter to skip)")
+  return b
+ 
+def sizeinput(st):
+  while True:
+    szi=input(st)
+    if szi.isdigit() or ((szi.count(".")==1)and szi!="."):
+      szif=float(szi)
+      break    
+    else:
+      print ("Your input is not a number? 輸入的不是數字")
+  return szif   
+          
+
+# input choices dictionary
+#organ
+orgd ={"to":"tonsil", "in":"intestine", "sk": "skin", "st": "stomach", "es":"esophagus","so":"soft tissue", "ut":"uterus","eg":"esophagogastric junction","lu":"lung","n":"nasal cavity", "pl":"pleura","plc": "pleural cavity","ur":"urinary bladder","adr":"adrenal gland","in":"intestine","br":"breast","li":"liver","me":"mediastinum","bra":"brain","men":"meninx","bo":"bone","he":"heart","sp":"spleen","ki":"kidney","urt":"ureter","va":"vagina","vu":"vulva","fa":"fallopian tube","ov":"ovary","te":"testis","ep":"epididymis","pr":"prostate","na":"nail","ex":"extremity","jo":"joint","np":"nasopharynx","o":"oral cavity","la":"larynx", "di":"disc, intervertebral", "cbd":"common bile duct", "pa":"pancreas", "sa": "salivary gland", "th":"thyroid","par":"parathyroid","an":"anus", "ln":"lymph node","si":"paranasal sinus","uv":"uvula","thm":"thymus","om":"omentum","bm":"bone marrow","ph":"pharynx","ap":"appendix","gb":"gallbladder","hp":"hypopharynx","er":"ear","mu":"muscle","pi":"pituitary","ve":"vessel"}
+#location
+locd={"nasopharynx":{"r":"right","l":"left","a":"adenoid"},"tonsil":{"r":"right","l":"left"},"meninx":{"f":"frontal","p":"parietal","t":"temporal","o":"occipital","fa":"falx"}, "pleural cavity":{"r":"right", "l":"left"}, "epididymis":{"r":"right","l":"left"},"adrenal gland":{"r":"right", "l":"left"}, "intestine":{"ce":"large, cecum","a":"large, colon, ascending","h":"large, colon, hepatic flexure", "t":"large, colon, transverse", "sf":"large, colon, splenic flexure", "d":"large, colon, descending", "dsj":"descending-sigmoid junction", "s":"large, colon, sigmoid", "rs":"large, rectosigmoid junction", "r":"large, rectum","pa":"large, proximal anastomosis","da":"large, distal anastomosis","l":"large","c":"large, colon","j":"small, jejunum","du":"small, duodenum","il":"small, ileum","ti":"small, ileum, terminal","am":"small, duodenum, ampulla of Vater","ic":"ileocecal valve","sm":"small","dc":"duodenal cuff"}, "mediastinum":{"a":"anterior", "p":"posterior"}, "ureter":{"u":"upper","m":"middle","l":"lower"},"vulva":{"r":"right", "l":"left"}, "bone":{"v":"vertebra","fh":"femur, head","h":"humerus","sk":"skull","mn":"mandible","mx":"maxilla","hy":"hyoid"}, "spleen":{}, "vagina":{"s":"stump"}, "testis":{"r":"right","l":"left"}, "ovary":{"r":"right", "l":"left","b":"bilateral"},"fallopian tube":{"r":"right","l":"left"},"larynx":{"v":"vocal cord","a":"anterior commissure"},"common bile duct":{},"nail":{"f":"finger","t":"toe","th":"thumb"}, "liver":{"r":"right lobe","l":"left lobe","s":"segment"}, "heart":{"m":"valve, mitral","a":"valve, aortic"}, "extremity":{}, "joint":{"kn":"knee", "hi":"hip", "sh":"shoulder"}, "oral cavity":{"b":"buccal", "t":"tongue", "p":"palate", "g":"gingiva","tb":"tongue base","mf":"mouth floor"}, "pancreas":{"h":"head", "n":"neck", "t":"tail","u":"uncinate process"}, "anus":{},"prostate":{"rm":"right medial", "rl":"right lateral", "ra":"right apex", "lm":"left medial", "ll":"left lateral","la":"left apex","n":"nodule","r":"right","l":"left","m":"midline","ma":"midline anterior","mp":"midline posterior"}, "esophagus":{"u":"upper","m":"middle","l":"lower"},"stomach":{"a":"antrum","b":"body","ag":"angle","f":"fundus","p":"pylorus","c":"cardia","ab":"antrum and body"}, "uterus":{"c":"cervix","e":"endometrium","ec":"endocervix","co":"corpus"}, "esophagogastric junction":{},"disc, intervertebral": {"c":"cervical","t":"thoracic","l":"lumbar"},"lung":{"ru":"upper lobe, right","rl":"lower lobe, right","rm":"middle lobe, right", "lu":"upper lobe, left", "ll":"lower lobe, left","p":"peribronchial","eb":"endobronchial"}, "salivary gland":{"p":"parotid","sm":"submandibular"}, "thyroid":{"r":"right", "l": "left"}, "parathyroid": {"ru": "right upper", "rl":"right lower", "lu":"left upper", "ll":"left lower"},"nasal cavity":{"i":"inferior turbinate", "r":"right","l":"left","s":"septum"},"urinary bladder":{"l":"left lateral wall","r":"right lateral wall","p":"posterior wall","d":"dome", "t":"trigone","uo":"ureteral orifice"}, "breast":{"o":"o\'clock additional margin","ca":"labeled as \'with microcalcification\'","wo":"labeled as \'without microcalcification\'"}, "kidney":{"p":"pelvis"}, "lymph node":{"n":"neck", "nl":"neck, level", "1":"neck, level I","1a":"neck, level IA","1b":"neck, level IB","2":"neck, level II","3":"neck, level III","4":"neck, level IV","5":"neck, level V","nsm":"neck, submental", "gr":"group", "g34":"group 3 and 4", "a":"axillary", "i":"inguinal","sc":"supraclavicular","r":"retroperitoneum","p":"pelvic","il":"iliac", "ei":"external iliac", "ii":"internal iliac", "ob":"obturator", "par":"paraaortic","sen":"sentinel","ns":"non-sentinel","m":"mediastinal","r":"regional","h":"hilar"},"soft tissue":{"th":"thigh","b":"buttock","n":"neck","i":"inguinal","l":"labeled as","me":"mediastinal","re":"retroperitoneal","cds":"cul-de-sac","tv":"tunica vaginalis","fa":"forearm"},"paranasal sinus":{"m":"maxillary","e":"ethmoid","f":"frontal","s":"sphenoid"},"skin":{"n":"neck","b":"back","bu":"buttock","c":"chest","a":"axillary","f":"forehead","el":"eyelid","p":"prepuce","sc":"scalp"},"uvula":{},"thymus":{},"bone marrow":{"i":"iliac crest"},"ear":{"m":"middle","eac":"external acoustic canal"},"muscle":{"n":"neck"},"brain":{"cl":"cerebellum","f":"cerebrum, frontal","p":"cerebrum, parietal","t":"cerebrum, temporal","o":"cerebrum, occipital"},"vessel":{"l":"leg","ll":"lower leg","le":"lower extremity","ao":"aorta"}}
+#intestine location for different forms
+intd={"large, cecum":"cecum","large, colon, ascending":"ascending colon","large, colon, hepatic flexure":"hepatic flexure", "large, colon, transverse":"transverse colon", "large, colon, splenic flexure":"splenic flexure", "large, colon, descending":"descending colon", "large, colon, sigmoid":"sigmoid colon", "large, rectosigmoid junction":"rectosigmoid junction", "large, rectum":"rectum","large, proximal anastomosis":"proximal anastomosis","large, distal anastomosis":"distal anastomosis","large":"large intestine","large, colon":"colon","small, duodenum":"duodenum","small, jejunum":"jejunum","small, ileum":"ileum", "small, duodenum, ampulla of Vater":"ampull of Vater","small":"small intestine"}
+#lung location for different forms
+lungd={"upper lobe, right":"right upper lobe","lower lobe, right":"right lower lobe","middle lobe, right":"right middle lobe", "upper lobe, left":"left upper lobe", "lower lobe, left":"left lower lobe"}
+#complex description
+head=["neck, level", "group","labeled as","status post","more than","sentinel","segment"]
+tail=["o\'clock additional margin","cm above anal verge","cm below incisors","toe","finger"]
+# general site and side
+sitd={"r":"right", "l":"left", "a":"anterior","p":"posterior", "ru":"right upper","rl":"right lower", "lu":"left upper", "ll":"left lower", "av":"cm above anal verge", "bi":"cm below incisors", "lb":"left lobe", "rb":"right lobe","su":"superficial","de":"deep","up":"upper","lo":"lower","s":"superior","i":"inferior","m":"medial","la":"lateral","n":"side not stated","nn":"site and side not stated","pr":"proximal","di":"distal","gr":"group", "g34":"group 3 and 4","st":"stoma","sp":"status post","b":"bilateral","md":"middle", "ana":"anastomosis site","tr":"terminal"}
+# general methods
+methd ={"ex":"excision","eb":"excisional biopsy", "b":"biopsy","en":"endoscopic biopsy","po": "polypectomy","re":"resection","ct":"CT-guided biopsy","ech":"echo-guided biopsy","c":"core needle biopsy","i":"incisional biopsy","deb":"debridement","pu":"punch biopsy","n":"needle biopsy","we":"wide excision","uc":"ultrasound-guided core needle biopsy","de":"debulking"}
+#methods for specific organs
+orgmethd={"fallopian tube":{"sa":"salpingectomy","ls":"laparoscopic salpingectomy"},"salivary gland":{"pa":"parotidectomy","di":"dissection"},"nail":{"cl":"clipping"},"breast":{"v":"vacuum-assisted biopsy","p":"partial mastectomy","rex":"re-excision","sm":"simple mastectomy","nsm":"nipple-sparing simple mastectomy"},"nasopharynx":{"ad":"adenoidectomy"},"uterus":{"con":"conization","lep":"loop electrosurgical excision procedure","sh":"subtotal hysterectomy","ath":"abdominal total hysterectomy","lm":"laparoscopic myomectomy","my":"myomectomy","tp":"TCR polypectomy","tm":"TCR myomectomy","tcr":"transcervical resection","cu":"curetting","hym":"hysteroscopic myomectomy","hys":"hysterectomy","lvh":"laparoscopy-assisted vaginal hysterectomy"},"lung":{"vw":"VATS wedge resection","ebu":"EBUS transbronchial biopsy","bu":"bullectomy","vb":"VATS bullectomy","we":"wedge resection","l":"lobectomy","tr":"transbronchial biopsy","br":"bronchoscopic biopsy","eb":"endobronchial biopsy","bal":"bronchoalveolar lavage"},"ovary":{"o":"oophorectomy","loc":"laparoscopic oophorocystectomy","lo":"laparoscopic oophorectomy","oc":"oophorocystectomy"},"lymph node":{"ebu":"EBUS transbronchial biopsy","l":"lymphadenectomy","di":"dissection","so":"supraomohyoid dissection","se":"selective neck dissection","mr":"modified radical neck dissection"},"intestine":{"esd":"endoscopic submucosal dissection","emr":"endoscopic mucosal resection","cop":"colonoscopic polypectomy","co":"colonoscopic biopsy","cl":"closure","sr":"segmental resection","rh":"right hemicolectomy","epm":"endoscopic piecemeal mucosal resection"},"esophagus":{"esd":"endoscopic submucosal dissection","emr":"endoscopic mucosal resection"},"prostate":{"tr":"transrectal ultrasound-guided biopsy","tu":"transurethral resection"},"urinary bladder":{"tu":"transurethral resection","cy":"cystoscopic biopsy"},"tonsil":{"ton":"tonsillectomy"},"heart":{"rep":"replacement"},"joint":{"rep":"replacement"},"disc, intervertebral":{"dis":"discectomy"},"anus":{"fis":"fistulectomy","hem":"hemorrhoidectomy"},"soft tissue":{"fis":"fistulectomy","her":"herniorrhaphy","d":"dissection","id":"incision and drainage","sis":"Sistrunk procedure","or":"orchiopexy"},"larynx":{"lms":"LMS biopsy"},"pleural cavity":{"dec":"decortication"},"stomach":{"sl":"sleeve gastrectomy","w":"wedge resection"},"paranasal sinus":{"f":"functional endoscopic sinus surgery","ess":"endoscopic sinus surgery"},"bone":{"cu":"curetting","thr":"total hip replacement"},"parathyroid":{"par":"parathyroidectomy"},"thyroid":{"t":"thyroidectomy","l":"lobectomy","st":"subtotal thyroidectomy","tt":"total thyroidectomy"},"omentum":{"o":"omentectomy"}, "bone marrow":{"t":"trephine biopsy"},"skin":{"sb":"shave biopsy","se":"shave excision","cir":"circumcision"},"common bile duct":{"s":"stent removal"},"appendix":{"a":"appendectomy","l":"laparoscopic appendectomy"},"gallbladder":{"ch":"cholecystectomy","lc":"laparoscopic cholecystectomy"},"nasal cavity":{"f":"functional endoscopic sinus surgery","ess":"endoscopic sinus surgery"},"kidney":{"ne":"nephrectomy","pn":"partial nephrectomy","rn":"radical nephrectomy"},"ear":{"m":"mastoidectomy"},"stomach":{"sb":"subtotal gastrectomy","t":"total gastrectomy","sl":"sleeve gastrectomy","w":"wedge resection"},"oral cavity":{"pg":"partial glossectomy","tg":"total glossectomy"},"muscle":{"di":"dissection"},"adrenal gland":{"ad":"adrenalectomy"},"pituitary":{"tsa":"transsphenoid adenomectomy"},"testis":{"o":"orchitectomy"},"liver":{"h":"hepatectomy"},"ureter":{"ur":"uretectomy","urs":"URS biopsy"},"spleen":{"sp":"splenectomy","lsp":"laparoscopic splenectomy"},"vessel":{"str":"stripping","th":"thrombectomy"}}
+
+hysterectomy=["hysterectomy","abdominal total hysterectomy","laparoscopy-assisted vaginal hysterectomy"]
+dissection = ["dissection","supraomohyoid dissection","selective neck dissection","modified radical neck dissection"]
+
+# tissue fragment
+frgnd={"":"one", "m":"multiple","a":"more than ten","b":"more than twenty","c":"more than thirty","1":"one","2":"two","3":"three","4":"four","5":"five","6":"six","7":"seven","8":"eight","9":"nine","10":"ten","11":"eleven","12":"twelve","13":"thirteen","14":"fourteen","15":"fifteen","16":"sixteen","17":"seventeen","18":"eighteen","19":"nineteen","20":"twenty", ">10":"more than ten",">20":"more than 20",">":"more than"}
+# color
+clrd={"yw":"yellowish white","b":"black","br":"brown","w":"white","t":"tan","g":"gray","y":"yellow","bl":"bloody","gr":"green"}
+# consistency
+consd={"s":"soft","e":"elastic","f":"firm","ef":"elastic to firm"}
+
+# default diagnosis for specific organs
+dxd={"stomach":{"c":"chronic active gastritis, with Helicobacter infection","f":"fundic gland polyp","m":"extranodal marginal zone lymphoma of mucosa-associated lymphoid tissue","gis":"gastrointestinal stromal tumor"},"tonsil":{"r":"reactive lymphoid hyperplasia"}, "intestine":{"t":"tubular adenoma","n":"no evidence of malignancy","mu":"mucosal tag","hy":"hyperplastic polyp","tv":"tubulovillous adenoma","ss":"sessile serrated lesion"}, "skin":{"ec":"epidermal cyst","s":"seborrheic keratosis","idn":"intradermal nevus","cn":"compound nevus"}, "esophagus":{"b":"benign squamous epithelium"}, "soft tissue":{"l":"lipoma","n":"necrotizing inflammation","h":"hernia sac","f":"compatible with fistula","d":"diffuse large B cell lymphoma"}, "uterus":{"c":"chronic cervicitis","p":"endocervical polyp","ep":"endometrial polyp","l":"leiomyoma","g":"gestational tissue","a":"adenomyosis","ls":"low-grade squamous intraepithelial lesion","hs":"high-grade squamous intraepithelial lesion"},"lung":{"b":"bullae"},"nasal cavity":{"c":"chronic rhinitis","d":"degeneration"}, "pleural cavity":{"e":"compatible with empyema"},"urinary bladder":{"c":"chronic cystitis"}, "adrenal gland":{"a":"adrenocortical adenoma","ph":"pheochromocytoma"},"breast":{"b":"benign breast tissue","f":"fibroadenoma","c":"fibrocystic change, with microcalcification","fc":"fibrocystic change"},"liver":{"h":"hepatocellular carcinoma","a":"adenocarcinoma, metastatic"},"mediastinum":{},"brain":{"a":"adenocarcinoma, metastatic"},"meninx":{},"bone":{"c":"carcinoma, invasive"},"heart":{"s":"chronic sclerosing valvulitis", "m":"myxomatous degeneration"},"spleen":{},"kidney":{"a":"angiomyolipoma"},"ureter":{"p":"papillary urothelial carcinoma, grade"},"vagina":{},"vulva":{"ca":"condyloma acuminatum"},"fallopian tube":{"n":"no specific change"},"ovary":{"e":"endometriotic cyst","t":"mature cystic teratoma"},"testis":{},"epididymis":{}, "prostate":{"b":"benign prostate tissue","n":"nodular hyperplasia","ag":"adenocarcinoma, Gleason score"}, "nail":{"n":"no evidence of fungal infection"}, "extremity":{},"joint":{"g":"ganglion cyst"},"nasopharynx":{"r":"reactive lymphoid hyperplasia"},"oral cavity":{"scc":"squamous cell carcinoma"}, "larynx":{"v":"vocal polyp"}, "disc, intervertebral":{"d":"degeneration"}, "common bile duct":{}, "pancreas":{}, "salivary gland":{"p":"pleomorphic adenoma","w":"Warthin tumor"}, "thyroid":{"n":"nodular hyperplasia","tis":"thyroiditis","ag":"adenomatous goiter"},"parathyroid":{"h":"compatible with hyperplasia"},"anus":{"h":"hemorrhoid","f":"fistula"}, "lymph node":{"n":"no evidence of metastasis (0/)","nd":"not diagnostic of malignancy","re":"reactive lymphoid hyperplasia"},"paranasal sinus":{"c":"chronic sinusitis"},"uvula":{"n":"no specific change","c":"chronic inflammation","r":"reactive lymphoid hyperplasia"},"thymus":{},"appendix":{"a":"acute appendicitis"},"gallbladder":{"c":"chronic cholecystitis","cl":"(1) chronic cholecystitis (2) cholelithiasis"},"vessel":{"v":"varicose vein"}}
+
+gdxd={"dlb":"diffuse large B-cell lymphoma","scc":"squamous cell carcinoma","ade":"adenocarcinoma","nm":"no evidence of malignancy","ns":"no specific change","mh":"minimal histologic change","ci":"chronic inflammation","met":"carcinoma, metastatic"}
+
+#definition of needle biopsy
+needles =["CT-guided biopsy","echo-guided biopsy","core needle biopsy","needle biopsy","transrectal ultrasound-guided biopsy","trephine biopsy"]
+#definition of endoscopic biopsy (or other small biopsy)
+endoscope=["endoscopic biopsy","endoscopic submucosal dissection","endoscopic mucosal resection","colonoscopic polypectomy","colonoscopic biopsy","EBUS transbronchial biopsy","cystoscopic biopsy","LMS biopsy","punch biopsy","vacuum-assisted biopsy","clipping","transbronchial biopsy"]
+
+#bottle number 
+btstrd ={'2':"two",'3':'three','4':'four','5':'five','6':'six','7':'seven','8':'eight','9':'nine','10':'ten'}
+
+# from label to organ
+
+lborg={"antrum":"stomach","body":"stomach","fundus":"stomach","pylorus":"stomach","buccal":"oral cavity","gingiva":"oral cavity","tongue":"oral cavity","palate":"oral cavity","cerebellum":"brain","RUL":"lung", "RML":"lung","RLL":"lung","LUL":"lung","LLL":"lung", "sinus":"paranasal sinus","nasal":"nasal cavity", "duodenum":"intestine", "endometrium":"uterus", "cervix":"uterus","endocervix":"uterus","hernia sac":"soft tissue","bowel":"intestine","EG junction":"esophagogastric junction","16G":"lymph node","18G":"lymph node","ECC":"uterus","LEEP":"uterus","mitral valve":"heart","aortic valve":"heart","S":"liver","cecum":"intestine","colon":"intestine","rectum":"intestine","EM":"uterus","rectal":"intestine","septum":"nasal cavity","turbinate":"nasal cavity","#":"lymph node","group":"lymph node","level":"lymph node","anastomo":"intestine","calcification":"breast","/":"breast","submandibular":"salivary gland","mitral":"heart","tonsil":"tonsil","uvula":"uvula","adenoid":"nasopharynx","glotti":"larynx"}
+
+
+
+
+# input parameter general function (z, identical to previous; select, or enter)
+def inpara (b,c,d,e):
+  print("\n --------------------------")
+  sortdic=sorted (c.items())
+  for k,v in sortdic:
+    print (k,v, end="     ")
+  print("\n --------------------------")
+  print (e)
+  if d!= 0:
+    print ("z for "+b[d-1])
+  a = input ("=")
+  if a== "z":
+    b.append(b[d-1])
+    print (b[d-1])
+  elif a in c:
+    b.append(c[a])
+    print (c[a])
+  else:
+    b.append(a)
+    print (a)
+
+#input number in description
+def innum (a, head=head, tail=tail):
+  if a in head or a in tail:
+      print ("Your selection is:  "+a)
+      num= input("Add some text?\n=")
+      if a in head:
+        a= a + " "+ num 
+      elif a in tail:
+        a= num + " " + a
+      print (a)
+  return a
+
+#output diagnosis line
+
+def dxlin (a,b,c):
+  print(b.capitalize(), end=", ", file=f)
+  for para in a:
+    if para != "":
+      print (para, end=", ", file=f)
+  print (c,file=f)
+
+#output cassette summary
+def summary (a,b,c,d,e):
+  if c == "":
+    cd= d
+  elif d =="":
+    cd= c
+  else:
+    cd= d +" "+ c
+  if a =="1":
+    print ("%s"%cd,file=f)
+  elif a == "2":
+    print ("%s"%b,file=f)
+  elif a == "3":
+    print (e,file=f)
+  elif a =='4':
+    print ("%s, %s"%(cd,e),file=f) 
+  elif a =='5':
+    print ("%s %s"%(cd,b),file=f)
+  
+  if b =="ovary":
+    print ("\n(備用) : %s fallopian tube\n"%c,file=f)
+  
+quit =""  
+
+
+while quit != "q":
+  btstr = ""
+  
+  orgi=""
+  methi=""
+  dxdi=""
+  frgi=""
+  clrconsi=""
+  sz4i=""
+  print("\n******************************************\nStart to generate a new blank report!\n")
+  spnum=input ("(optional) SP Number: 病理號 (enter to skip)")
+  print("******************************************\nHow many bottles? \n檢體有幾瓶 <enter> 1 bottle")
+  btstr = input ("=")
+  if btstr == "q": break
+  elif btstr== "": btstr="1"
+  if btstr in btstrd:
+    btn=btstrd[btstr]
+  else: btn= btstr
+  bt= int(btstr) # Input bottle number
+  mod=input("\nWhat do you need? Enter for full report 完整報告,\n  d for diagnosis line only 診斷,\n  dc for diagnosis and summary 診斷與蠟塊列表,\n  c for checklist 條列式報告\n")
+  # Creat label of the bottles
+  lb=[]
+  lblb=[]
+  if bt ==1:
+    lb=[]
+  else:  
+   print ("\nLabel of the bottle(s) 每瓶標籤")
+   print("<enter> Default label A,B,..,<2> Default label 1,2,..,<3> Other label 其他, <4> A,B,C plus text, <5> 1,2,3 plus text")
+   ibch=input("=")
+   if ibch=="": #alphabet
+    chrin=65
+    for i in range (bt):
+      ch=chr(chrin)
+      lb.append ("("+ch+")")
+      chrin=chrin+1
+   elif ibch =="2":  #number
+    for i in range (bt):
+      lb.append("("+str(i+1)+")")
+   else:
+    for i in range (bt):  #enter label
+     print (i+1) 
+     if ibch == '4':
+       print (chr(65+i)+": please enter the text")
+       lb.append ("("+chr(65+i)+") "+input ("="))
+     elif ibch =='5':
+       print (str(i+1)+": please enter the text")
+       lb.append ("("+str(i+1)+") "+input ("=")) 
+     else:
+       print ("Please enter the label 輸入標籤")
+       lb.append ("\'"+input ("=")+"\'")
+
+  
+   print ("\nThe %d bottle(s) are labeled as:"%bt)
+   print (lb)  
+  
+  # fixation
+  if mod == "":
+    print ("\n 福馬林固定? <1> Fixed or <2> Fresh")
+    fx= input ("=")
+    if fx =="1" or fx=="":
+      fxstr = " fixed in formalin"
+    if fx =="2":
+      fxstr = " in fresh state"
+
+  # lable in the diagnosis line or not
+  lbl=""
+  lbl2=""
+  if bt !=1:
+   print ("\nInclude the label in diagnosis line? 標籤要列在診斷嗎 <enter> No <2> Yes") 
+   lbl=input ("=")
+   if lbl=="2":
+     lbl2=input("How the label is shown: 列在診斷的方式 <enter> labeled as xxx <1> xxxx")
+
+   for i in range (bt):
+     if lbl2 =="1":
+       lblb.append(lb[i])
+     else:
+       lblb.append("labeled as "+lb[i])
+
+  #Enter parameters of each bottle
+  org=[]
+  loc=[]
+  sit=[]
+  meth=[]
+  dx=[]
+  frgn=[]
+  sz=[]
+  sz1=[]
+  sz2=[]
+  sz3=[]
+  sz4=[]
+  clr=[]
+  cons=[]
+  dxinf=[]
+
+  
+  for i in range(bt):
+    
+    print ("\n**************************\nPlease enter the data of the bottle(s)) 輸入資料 (z=同上一瓶)")
+  
+    print ("***********器官**********ORGAN************")
+
+  
+    if (orgi =="!" and i>=1):
+      print ("All organs are:"+org[0])
+      allthesame (org,bt,i)
+    elif orgi !="!":
+      if bt >1:
+        for j in lborg:
+          if j in lb[i]:
+            print("The organ is "+lborg[j]+" <enter> OK <1> not OK")
+            if input ("=") =="":
+              org.append(lborg[j])
+              print ("The organ is "+lborg[j])
+            else:
+              inpara(org,orgd,i,"The hot keys, or KEY IN THE ORGAN 器官")
+      if (len(org) == 0) or (len(org)<=i):
+          inpara(org,orgd,i,"The hot keys, or KEY IN THE ORGAN 器官")
+      
+    if i==0 and bt>2:
+      orgi=qsame(bt)
+    
+    if bt>1:
+      if "right" in lb[i]:
+        print ("The side is right <enter> OK <space> empty <other key> skip")
+        dfside = input ("=")  
+      elif "left" in lb[i]:
+        print ("The side is left <enter> OK <space> empty <other key> skip")   
+        dfside = input ("=")
+      else: dfside=""
+      if dfside =="":
+        if ("right" in lb[i]):
+          loc.append("right")
+          print ("The side is right.")
+        if ("left" in lb[i]):
+          loc.append("left")      
+          print ("The side is left.")
+      elif dfside ==" ":
+        loc.append("")
+    if (len(loc) == 0) or (len(loc)<=i):
+      if org[i] in locd:
+        inpara(loc,locd[org[i]],i,"The hot keys, or KEY IN THE LOCATION 位置1")
+      else: 
+        inpara(loc,{},i,"The hot keys, or KEY IN THE LOCATION")
+
+
+    loc[i]=innum(loc[i])
+    if bt>1 and (loc[i]!="right") and (loc[i]!="left"):
+      if "right" in lb[i]:
+        print ("The side is right <enter> OK <space> empty <other key> skip") 
+        dfside = input ("=") 
+      elif "left" in lb[i]:
+        print ("The side is left <enter> OK <space> empty <other key> skip")   
+        dfside = input ("=")
+      else: dfside = ""
+      if dfside =="":
+        if ("right" in lb[i]):
+          sit.append("right")
+          print ("The side is right.")
+        if ("left" in lb[i]):
+          sit.append("left")   
+          print ("The side is left.")   
+      elif dfside ==" ":
+        sit.append("")
+    if (len(sit) == 0) or (len(sit)<=i):
+      inpara(sit,sitd,i,"Side or site? 位置2")
+    sit[i]=innum(sit[i])
+    
+    print("\n*********METHOD******術式*******METHOD*********METHOD*******")
+    
+    if (methi =="!" and i>=1):
+      print ("All methods are: "+meth[0])
+      allthesame(meth,bt,i)
+    elif methi !='!':
+      if org[i] in orgmethd:
+        inpara (meth,dict(methd,**orgmethd[org[i]]),i,"The hot keys, or KEY IN THE METHOD 術式")
+      else:
+        inpara (meth,methd,i,"The hot keys, or KEY IN THE METHOD 術式")
+    
+    if i==0 and bt>2: methi = qsame(bt)
+
+    print("\n*********DIAGNOSIS******診斷*******DIAGNOSIS*******")
+  
+    if (dxdi =="!" and i>=1):
+      print ("All diagnoses are: "+ dx[0])
+      allthesame(dx,bt,i)
+    elif dxdi !='!':
+      if org[i] in dxd:
+        inpara(dx,dict(gdxd,**dxd[org[i]]),i,"Default diagnosis? 診斷")
+      else:
+        inpara(dx,gdxd,i,"Default diagnosis? 診斷")
+ 
+    if i==0 and bt>2: dxdi = qsame(bt)
+    # parameters included in the diagnosis line
+    if lbl =="2":
+      dxinf.append ([loc[i],sit[i],lblb[i],meth[i]])
+    else:
+      dxinf.append ([loc[i],sit[i],meth[i]])
+
+    if mod == "" or mod == "c":
+      print("\n*********FRAGMENT NUM & SIZE********檢體內容**********")
+      
+      if (frgi =='!' and i>=1):
+        print ("All fragment numbers are: "+frgn[0])
+        allthesame(frgn,bt,i)
+      elif frgi !='!':
+        inpara(frgn,frgnd,i,"Fragment number? 幾塊 <enter = 1 fragment>")
+        frgn[i]=innum(frgn[i])
+      if i==0 and bt>2: frgi= qsame (bt)
+   
+    # default size for needle biopsy
+      if meth[i] in needles:
+        dfsz= "2"
+        print ("Default size: ? x 0.1 x 0.1 cm 長度")
+    # input size, default or free enter
+      else:
+        
+        print ("Default size? 大小\n<1> 0.3 x 0.2 x 0.2 cm 預設大小\n<2> ? x 0.1 x 0.1 cm 只輸入長度\n<Enter> Not default size 非預設大小")
+        dfsz=input ("=")
+      
+      if dfsz =="1":
+        sz1.append(float(0.3))
+        sz2.append(float(0.2))
+        sz3.append(float(0.2))
+      elif dfsz == "2":
+        sz1.append(sizeinput("size 1 ="))
+        sz2.append(float(0.1))
+        sz3.append(float(0.1))
+      elif dfsz =="z":
+        sz1.append(sz1[i-1])
+        sz2.append(sz2[i-1])
+        sz3.append(sz3[i-1])
+      else:
+        sz1.append(sizeinput ("size 1="))
+        sz2.append(sizeinput ("size 2="))
+        sz3.append(sizeinput ("size 3="))
+      sz.append ([sz1[i],sz2[i],sz3[i]])
+      sz[i].sort(reverse=True)
+      if frgn[i] != "one":
+        if (meth[i] in needles) or (meth[i] in endoscope) or (mod == "c"):
+          sz4.append(1)
+        else:
+          
+          if (sz4i=='!' and i>=1):
+            allthesame(sz4,bt,i)
+          elif sz4i != "!":
+            print ("The size in aggregate? <1> No <2> Yes")
+            sz4.append(int(input ("=")) )
+          if i==0 and bt>2: sz4i=qsame(bt)
+      else: 
+          if (sz4i=='!' and i>=1):
+            allthesame(sz4,bt,i)
+          else: sz4.append(1)
+     
+      
+    if mod =="" or (mod=="c" and "oral cavity" in org):    
+      print ("Color and consistency 顏色質地")
+ 
+      if (clrconsi =='!' and i>=1):
+        print ("All colors are: "+clr[0])
+        print ("All consistencies are: "+cons[0])
+        allthesame(clr,bt,i)
+        allthesame(cons,bt,i)
+      elif clrconsi !='!':
+        print ("Default 預設常用 <1> yellowish white and elastic <2> white and soft <3> gray and elastic \n <enter> Not default 非預設")
+        dfcc = input ("=")
+        if dfcc =="1":
+          clr.append ("yellowish white")
+          cons.append ("elastic")
+        elif dfcc =="2":
+          clr.append ("white")
+          cons.append ("soft")
+        elif dfcc == "3":
+          clr.append ("gray")
+          cons.append ("elastic")
+        elif dfcc == "z":
+          clr.append (clr[i-1])
+          cons.append (cons[i-1])
+        elif dfcc=="":
+          inpara(clr,clrd,i,"Color 顏色=")
+          inpara(cons,consd,i,"Consistency 質地=")
+      if i ==0 and bt>2:
+        clrconsi=qsame(bt)
+
+    
+# All for section or not (neelde or endoscopy are default for Jar0)
+  if mod != "d":
+    jadef = 0
+    for i in range (bt):
+      if (meth[i] not in needles) and (meth[i] not in endoscope) :
+        jadef = jadef +1
+    if jadef==0:
+      al="1"
+    else:    
+      print ("\n*******************************\n檢體有無全放?\n<1> Jar0 <2> Jar1 <3> Jar2")
+      al= input ("=")
+
+# How detailed cassette summary
+    if bt !=1:
+     print ("\nCassette summary requires 蠟塊列表 \n<1> Location\n<2> Organ \n<3> Label \n<4> Location and label\n<5> Organ and location \n<enter> AUTOMATIC 自動")
+     cs=input ("=")
+  
+  print ("\n *********************************\nPlease see the txt file for the blank report after you quit the program. \n報告在文字檔(report.txt)中\n *********************************\n")
+  
+
+
+  
+  # Output
+  f=open("report.txt","a")
+  print (spnum, file=f)
+  for i in range (bt):
+      dxlin (dxinf[i],org[i],dx[i])
+      if org[i]== 'ovary':
+        print ("!Fallopian tube, %s, salpingectomy, no specific change"%loc[i],file=f)
+      
+      if meth[i] in dissection and org[i]=="lymph node":
+        print ("!Salivary gland, submandibular, %s, dissection, no evidence of malignancy\n!Muscle, neck, %s, dissection, no evidence of malignancy"%(sit[i],sit[i]),file=f)
+      elif org[i]=="uterus" and meth[i] in hysterectomy:
+        print ("!Uterus, cervix, %s, chronic cervicitis"%(meth[i]),file=f)
+      elif meth[i]=="right hemicolectomy":
+        print ("!Intestine, ileum, right hemicolectomy, no evidence of malignancy\n!Appendix, appendectomy, no evidence of malignancy\n!Lymph node, regional, lymphadenectomy, no evidence of metastasis (0/)\n",file=f) 
+
+  if mod =="":
+  # Output gross description
+    if bt ==1:  # one bottle
+      print ("\n\n     The specimen submitted consists of ", end="",file=f)
+      if frgn[0]=="one":
+        frg1 (fxstr,0)  
+        print ("\n\n     Grossly, it is %s and %s."%(clr[0],cons[0]),file=f)
+      else:
+        if sz4[0]==1:
+          frga (fxstr,0)
+        else:
+          frgb (fxstr,0)
+        print ("\n\n     Grossly, they are %s and %s."%(clr[0],cons[0]),file=f)
+      if al =="1":
+        print ("\n     All for section and labeled as A1.                   Jar 0",file=f)
+      elif al =='3':
+        print ("\n     Representative sections are take and labeled as:              Jar 2",file=f)
+      else:
+        print ("\n     Representative section is taken and labeled as A1.       Jar 1",file=f)
+    
+    else:   # multiple bottles
+      print ("\n\n     The specimen is submitted in %s bottles labeled as"%btn, end=" ",file=f)
+      if bt ==2:
+        print ("%s and %s, respectively,%s."%(lb[0],lb[1],fxstr),file=f)
+      else:
+        for i in range (bt-1):
+         print (lb[i], end=", ",file=f)
+        print ("and %s, respectively,%s."%(lb[bt-1],fxstr),file=f)
+      for i in range (bt):
+        print ("\n     The specimen labeled as %s consists of "%lb[i], end="",file=f)
+        if frgn[i]=="one":
+          frg1 ("",i)
+          print ("Grossly, it is %s and %s."%(clr[i],cons[i]),file=f)
+        else:
+      
+          if sz4[i]==1:
+            frga ("",i)
+          else:
+            frgb ("",i)
+          print ("Grossly, they are %s and %s."%(clr[i],cons[i]),file=f)
+  if mod =="c":
+    print ("\n\nMACROSCOPIC:", file=f)
+    # oral biopsy format (with many items)
+    if "oral cavity" in org:
+      for i in range (bt):
+        print ("Specimen "+chr(i+65)+":\n  1. Biopsy site: %s, %s\n  2. Specimen type: %s\n  3. Quantity: %s tissue fragment(s), (up to) %.1f x %.1f x %.1f cm.\n  4. Appearance: %s\n     Consistency: %s"%(loc[i],sit[i],meth[i],frgn[i],sz[i][0],sz[i][1],sz[i][2],clr[i],cons[i]), file=f)
+    # TRUS-P (more than 4 bottles)
+    elif "transrectal ultrasound-guided biopsy" in meth:
+      for i in range (bt):
+         print ("  "+chr(i+65)+". %s: %s core(s) (length up to %.1f cm)" %(loc[i].capitalize(),frgn[i],sz[i][0]),file=f)
+    # general checklist (fragment and size only)     
+    else: 
+      if bt>1: 
+        for i in range (bt): 
+          print ("  "+chr(i+65)+": %s tissue fragment(s), (up to) %.1f x %.1f x %.1f cm." %(frgn[i],sz[i][0],sz[i][1],sz[i][2]),file=f)
+      else:
+        print ("*Quantity: one tissue fragment,  %.1f x %.1f x %.1f cm.\n\n"%(sz[0][0],sz[0][1],sz[0][2]),file=f)
+    if bt==1:
+      print ("\n     All for section and labeled as A1.     Jar 0\n",file=f)
+
+  if mod !="d" and bt !=1:
+      if al =="1":
+        print ("\n     All for section and labeled as:             Jar 0",file=f)
+      elif al =="2":
+        print ("\n     Representative sections are taken and labeled as:             Jar 1",file=f)
+      elif al =="3":
+        print ("\n     Representative sections are taken and labeled as:             Jar 2",file=f)
+    #output cassette summary
+    #automatic ouptu format
+      if bt != 1:
+        if cs =="":
+          ctorg1 =0
+          ctorg2=0
+          ctloc1=0
+          ctloc2=0
+          for i in range (bt):
+            for j in range (bt):
+              if (i != j) :
+                if org[i] == org[j]:
+                  ctorg1 +=1
+                  if (loc[i]==loc[j]) and (sit[i] == sit[j]):
+                    ctloc1+=1
+                  else:
+                    ctloc2+=1
+                else:
+                  ctorg2 +=1
+         
+          if ctorg1==0: # all different      
+            cs='2'
+          elif ctorg1>0 and ctorg2==0: #all identical
+            if ctloc1==0:
+              cs='1'
+            elif ctloc1>1 and ctloc2==0:
+              cs='3'
+            else:
+              cs='4'
+          else: #mixed
+             if ctloc1==0:
+              cs='5'
+             else: 
+              cs='4'
+      
+
+    #output format according to selection    
+        for i in range (bt):
+          print (chr(i+65), end="1: ",file=f)
+          if (org [i] == "intestine") and (loc[i] in intd):
+            summary(cs,"",intd[loc[i]],sit[i],lb[i])
+          elif (org [i] == "lung") and (loc[i] in lungd):
+            summary(cs,"",lungd[loc[i]],sit[i],lb[i])  
+          else:  
+            summary(cs,org[i],loc[i],sit[i],lb[i]) 
+            if org[i]=="lymph node" and meth[i] in dissection:
+              print ("!: %s submandibular gland\n!: %s neck muscle\n"%(sit[i],sit[i]),file=f)
+            elif org[i]=="uterus" and meth[i] in hysterectomy:
+              print  ("\n!: cervix\n",file=f)
+
+  if bt ==1 and mod == ("dc" or "" or "c"):
+    if org[0]== "ovary":
+      print ("!: %s ovary\n: %s fallopian tube"%(loc[0],loc[0]),file=f)
+    elif org[0]=="lymph node" and meth[0] in dissection:
+      print ("!: %s %s lymph node\n:%s submandibular gland\n:%s neck muscle\n"%(sit[0],loc[0],sit[0],sit[0]),file=f)
+    elif org[0]=="uterus" and meth[0] in hysterectomy:
+      print  ("\n!: corpus\n : cervix\n",file=f)
+  
+  if mod =="":
+  # Output general format 
+    if bt == 1:
+      print ("\n\n     Microscopically, it shows %s."%dx[0], file=f)
+    else:
+      print ("\n\n     Microscopically, section A shows",file=f)
+      for i in dx:
+        print (i, file=f)
+   
+    print("\n\nRef: \n\n\n\n********************\n\n\n\n",file=f)
+  else:
+    print("\n\n*******************************",file=f)
+ 
+  
+  f.close()
+  quit=input("quit the program? (q to quit 離開) (other keys to continue 任意鍵繼續)")
+
+ 
+
+  
+ 
+  
+
+  
