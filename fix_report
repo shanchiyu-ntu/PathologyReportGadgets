@@ -1,0 +1,415 @@
+### GumoU 龜毛老尤
+### 轉換報告格式
+# Gross: text and checkline 互相轉換
+# 選擇input,output檔案名稱
+# Polyp: Dx and Micro上下同步
+# Gastritis: Dx and Micro上下同步
+# Breast core biopsy: Dx and Micro上下同步 
+# TURP A. 轉 A:
+print("************************\nGumoU 龜毛老尤 alpha 1.1\n********************\n")
+
+import re  
+
+def splitting (lines,a1,a2,a3):
+  global dxlines, macrolines, castlines, microlines
+  dxlines=[]
+  macrolines=[]
+  castlines=[]
+  microlines=[]
+  split(lines, 0,a1, dxlines)
+  split(lines, a1,a2, macrolines)
+  split(lines, a2,a3, castlines)
+  split(lines, a3,len(lines), microlines) 
+  print("Diagnosis:")
+  print(dxlines)
+  print("Gross")
+  print(macrolines)
+  print("Summary")
+  print(castlines)
+  print("Micro")
+  print(microlines) 
+
+def split (lines, t1,t2, parts):
+  for i in range(t1,t2):
+    parts.append(lines[i])
+
+
+def txoutput(bt,fx,fr,sz,clrcon):
+
+  for i in range(bt):
+    if clrcon[i]=="":
+      clrcon[i]="yellowish white and elastic"
+  if bt==1:
+    print("\n     The specimen submitted consists of %s"%fr[0].lower(),end="",file=g)
+    if re.match("one|One",fr[0]):
+      print(" measuring %s in size %s. \n\n     Grossly, it is %s."%(sz[0],fx,clrcon[0]),file=g)
+    else:
+      print("s measuring up to %s in size %s. \n\n     Grossly, they are %s."%(sz[0],fx,clrcon[0]),file=g)
+  elif bt>1:
+    print("\n     The specimen is submitted in %d bottles labeled as  %s."%(bt,fx),file=g)
+    for i in range(bt):
+      print("\n     The specimen labeled as  consists of %s"%fr[i].lower(),end="",file=g)
+      if re.match("One|one",fr[i]):
+        print(" measuring %s in size. Grossly, it is %s."%(sz[i],clrcon[i]),file=g)
+      else:
+        print("s measuring up to %s in size. Grossly, they are %s."%(sz[i],clrcon[i]),file=g)
+
+def choutput(bt,fx,fr,sz,clrcon):
+  print ("MACROSCOPIC:", file=g)
+  if bt>1: 
+    for i in range (bt): 
+      print ("  "+chr(i+65)+": %s(s), (up to) %s; %s" %(fr[i].capitalize(),sz[i],clrcon[i]),file=g)
+  else:
+    print ("*Quantity: %s(s),  %s.     %s"%(fr[0].capitalize(),sz[0],clrcon[0].capitalize()),file=g)
+
+def polysyn():
+  dx=[]
+  for i in range(len(dxlines)):
+    print("Bottle %d"%(i+1))
+    dxq=input("Diagnosis: (直接輸入或使用快速鍵)(t) tubular adenoma (h) hyperplastic polyp (s) sessile serrated lesion (m) mucosal tag (tv) tubulovillous adenoma")
+    dxd={"t":"tubular adenoma","h":"hyperplastic polyp","s":"sessile serrated adenoma","m":"mucosal tag","tv":"tubulovillous adenoma"}
+    if dxq in dxd:
+      dxq=dxd[dxq]
+    dx.append(dxq)
+    for c in reversed(range(len(dxlines[i]))):
+      if dxlines[i][c]==',':
+        cm = c
+        break
+    dxlines[i]=dxlines[i][:c+1]+" "+dx[i]+"\n"
+    print(dxlines[i])  
+  for k in range(len(microlines)):
+    if re.search('Histological diagnosis:',microlines[k]):
+      if len(dxlines)==1:
+        microlines[k+1]="     "+dx[i].capitalize()+"\n"
+        if  "/" in microlines[k+2]:
+          microlines[k+2]=""
+      else:
+        for i in range(len(dxlines)):
+          microlines[k+1+i*2]=chr(i+65)+": "+dx[i].capitalize()+"\n"
+          if "/" in microlines[k+2+i*2]:
+            microlines[k+2+i*2]=""
+    if re.search('High grade dysplasia',microlines[k]):
+        microlines[k]="* High grade dysplasia: Absent\n"
+        if microlines[k+1]=="Absent / Present \n":
+          microlines[k+1]=""
+    if re.search('Invasive carcinoma',microlines[k]):
+        microlines[k]="* Invasive carcinoma: Absent\n" 
+    if re.search('margin',microlines[k]):
+      if len(dxlines)==1:
+        if "biopsy" not in dxlines[0]:
+          microlines[k+1]="     Uninvolved   Cannot be assessed\n"
+        else:
+          microlines[k]=""
+          microlines[k+1]=""
+      else:
+        for j in range(len(dxlines)):
+          if 'biopsy' not in dxlines[j]:
+            microlines[k+j+1]="  Section "+chr(j+65)+": Uninvolved  Cannot be assessed\n"
+          else:
+            microlines[k+j+1]=""
+
+def gastritis():
+  g1=input("(enter) chronic gastritis (a) chronic active gastritis")
+  if g1=="":
+    g1="chronic gastritis"
+    gg1="chronic gastritis with lymphoplasma cell infiltration in the lamina propria."
+  elif g1=="a":
+    g1="chronic active gastritis"
+    gg1="chronic active gastritis with neutrophil and lymphoplasma cell infiltration in the lamina propria and foveolar glands."
+  g2=input("(h) with Helicobacter infection (enter) without Helicobacter infection")
+  if g2=="h":
+    g2="with Helicobacter infection\n"
+    gg2=" Rod-like Helicobacter bacilli are found."
+  elif g2=="":
+    g2="without Helicobacter infection\n"  
+    gg2=" No Helicobacter bacillus is found."
+
+  c=dxoutput()
+  dxlines[0]=dxlines[0][:c+1]+" "+g1+", "+g2  
+
+  im=input("(i) with intestinal metaplasia (enter) without intestinal metaplasia")
+  if im=="i":
+    im=" Focal intestinal metaplasia is seen."
+  elif im=="":
+    im=" No intestinal metaplasia is seen."
+  
+  for i in range(len(microlines)):
+    if re.search("Ref:",microlines[i]):
+      reflines=''.join(microlines[i:])   
+  microlines.clear()
+  microlines.append("\n     Microscopically, it shows ")
+  microlines.append(gg1)
+  microlines.append(im)
+  microlines.append(gg2)
+  microlines.append("\n\n")
+  microlines.append(reflines)
+
+def dxoutput():
+  for c in reversed(range(len(dxlines[0]))):
+    if dxlines[0][c]==',':    
+      cm=c
+      break
+  return cm
+
+def ref():
+  for i in range(len(microlines)):
+    if re.search("總院",microlines[i]):
+      microlines[i]=re.sub("總院 ","",microlines[i])
+      if ("總院" not in microlines[i+1]) and (i<len(microlines)):
+        microlines[i]=re.sub("\n"," ",microlines[i])
+    if i<(len(microlines)-1):
+      if re.search("\[02\].",microlines[i+1]):
+        print ("reference with multiple diagnosis")
+        microlines[i]=re.sub("\[01\]. ","\n[01]. ",microlines[i])
+      else:
+        microlines[i]=re.sub("\[01\]. ","",microlines[i])
+    elif i==len(microlines)-1:
+      microlines[i]=re.sub("\[01\]. ","",microlines[i])
+    microlines[i]=re.sub("\[0","",microlines[i])
+    microlines[i]=re.sub("\]","",microlines[i]) 
+    while re.search(", ,",microlines[i]):
+      microlines[i]=re.sub(", ,",",",microlines[i])
+    if re.match(", ",microlines[i]):
+      microlines[i]=microlines[i][2:]
+    if ", \n" in microlines[i]:
+      microlines[i]=re.sub(", \n","\n",microlines[i])
+
+def breastcore():
+  b1=input("(b) benign breast tissue (f) fibroepithelial lesion (fa) fibroadenoma (fc) fibrocystic change (直接輸入其他診斷")
+  bdx={"b":"benign breast tissue","f":"fibroepithelial lesion","fa":"fibroadenoma","fc": "fibrocystic change"}
+  
+  bdes={"benign breast tissue":"benign breast tissue.","fibroepithelial lesion":"a fibroepithelial lesion lack of conspicuous mitotic activity in the stroma. A benign fibroepithelial lesion   fibroadenoma is favored.","fibroadenoma":"a fibraodenoma.","fibrocystic change":"fibrocystic change."}
+  if b1 in bdx:
+    b1=bdx[b1]
+    b2=bdes[b1]
+  else:
+    b2=""
+  c=dxoutput()
+  dxlines[0]=dxlines[0][:c+1]+" "+b1 +"\n" 
+  for i in range(len(microlines)):
+    if re.search("Ref:",microlines[i]):
+      reflines=''.join(microlines[i:])   
+  microlines.clear()
+  microlines.append("\n     Microscopically, it shows ")
+  microlines.append(b2)
+  microlines.append("\n\n")
+  microlines.append(reflines)
+
+def copydx():
+  bdx={"chc":"chronic cholecystitis","chl":"(1) chronic cholecystitis (2) cholelithiasis","bel":"benign lung tissue","bsq":"benign squamous epithelium","mid":"mild dysplasia","mod":"moderate dysplasia","sed":"severe dysplasia","ade":"adenocarcinoma","scc":"squamous cell carcinoma","epc":"epidermal cyst","ges":"gestational tissue","aa":"acute appendicitis","csv":"chronic sclerosing valvitis","mxd":"myxomatous degeneration","ec":"epidermal cyst","emp":"endometrial polyp","ecp":"endocervical polyp"}
+  for d in bdx:
+    print (d+":"+bdx[d])
+  b1=input("Diagnosis: ")
+  if b1 in bdx:
+    b1=bdx[b1]
+  c=dxoutput()
+  dxlines[0]=dxlines[0][:c+1]+" "+b1+"\n"
+  for i in range(len(microlines)):
+    if re.search("Ref:",microlines[i]):
+      reflines=''.join(microlines[i:])   
+  microlines.clear()
+  microlines.append("\n\n     Microscopically, it shows "+b1+".\n\n")
+  microlines.append(reflines)
+
+
+
+preed=input("欲修改檔案名稱 <enter>(預設)ugly.txt <1>(重改)edited.txt 或<手動輸入檔名>")
+if preed=="":
+  preed="ugly.txt"
+elif preed=="1":
+  preed="edited.txt"
+
+f=open(preed, mode='r')
+lines=f.readlines()
+f.close()
+
+posted=input("修改後檔案名稱 <enter>(預設)edited.txt <1>(重改)reedited.txt 或<手動輸入檔名>")
+if posted=="":
+  posted="edited.txt"
+elif preed=="1":
+  posted="reedited.txt"
+g=open(posted, mode='w')
+dxlines=[]
+macrolines=[]
+castlines=[]
+microlines=[]
+frgn=[]
+sz=[]
+sz1=[]
+sz2=[]
+sz3=[]
+sz4=[]
+clr=[]
+con=[]
+
+
+
+#automatic splitting
+for i in range(len(lines)):
+  if lines[i].isspace():
+    a1=i
+    break
+for i in range(a1,len(lines)):
+  if "section" in lines[i]:
+    a2=i-1
+    break
+for i in range(a2,len(lines)):
+  if ("MICRO" in lines[i]) or ("Micro" in lines[i]):
+    a3=i-1
+    break
+  else:
+    a3=len(lines)
+
+
+splitting(lines, a1,a2,a3)
+
+
+#manual splitting
+checkdx=input("Correct splitting? <enter> Yes <other keys> No")
+if checkdx !="":
+  for t in range(len(lines)):
+    print(str(t+1)+" "+lines[t])
+  a1=int(input("Which line is the end of diagnosis  "))
+  a2=int(input("Which line is the end of gross finding  "))
+  a3=int(input("Which line is the end of slide summary  "))  
+  splitting(lines,a1,a2,a3)
+
+
+
+mode=input("選擇需要編輯的部分 (enter)Gross (1) 診斷上下同步 (r) Reference (s) Summary")
+if mode=="":
+  form=input("需要改成(1)文字(2)條列")  
+  datasrc=input("資料來源 (enter)自動辨識 (2) 手動輸入(測試用) (3) 預設(測試用)")
+  #自動收集資料
+  if datasrc =='':
+    macro= "".join(macrolines)
+    print(macro)
+    if re.search('fixed',macro):
+      fx="fixed in formalin"
+    elif re.search('fresh',macro):
+      fx="in fresh state"
+    else:
+      fx=input("fixation status= <enter> fixed in formalin <1> in fresh state")
+      if fx=="":
+        fx="fixed in formalin"
+      elif fx=='1':
+        fx="in fresh state"
+      else:
+        fx="fixed in formalin"
+    print(fx)
+
+    bt=int(input("bottle numbe="))
+
+ 
+  # search tissue fragemnts and size
+  p1=re.compile('(\S+ tissue fragment)|(more than \S+ tissue fragment)')
+  p2=re.compile('\S+ x \S+ x \S+ cm')
+  p3=re.compile('\S+ and \S+')
+  a1=0
+  fr=[]
+  fl=[]
+  for i in range (bt):
+    f1=p1.search(macro,a1,len(macro))
+    if f1:
+      fr.append(f1.group())
+      fl.append(f1.end())
+    else:
+      fr.append("tissue fragment")
+      fl.append(0)
+    a1=fl[i]
+  print("Tissue fragment number\nData recognized:")
+  print(fr)
+  print("Location of data recognized:")
+  print(fl)
+  
+
+  sz=[]
+  clrcon=[]
+  for i in range (bt):
+    f2=p2.search(macro,fl[i],len(macro))
+    f3=p3.search(macro,fl[i],len(macro))
+    if f2:
+      sz.append(f2.group())
+    else:
+      sz.append("")
+    if f3:
+      clrcon.append(f3.group())
+    else:
+      clrcon.append("")
+  print("Tissue size\nData recognized:")
+  print(sz)
+  print("Tissue color and consistency\nData recognized:")
+  print(clrcon)
+
+  #手動輸入資料 
+  if datasrc=="2":
+    bt=input("bottle number")
+    for i in range(int(bt)):
+      print("bottle "+str(i+1)+": ")
+      frgn.append(input("  fragment number: "))
+      sz1.append(input("  size1=  "))
+      sz2.append(input("  size1=  "))
+      sz3.append(input("  size1=  "))
+      sz4.append(1)
+      sz.append([sz1[i],sz2[i],sz3[i]])
+      clr.append(input("  Color=  "))
+      con.append(input("  Consistency=  "))
+  if datasrc=="3":
+    bt=1
+    fx="fixed in formalin"
+    frgn.append(3)
+    sz1.append(0.3)
+    sz2.append(0.2)
+    sz3.append(0.1)
+    sz4.append(1)
+    sz.append([sz1[0],sz2[0],sz3[0]])
+    clr.append("gray")
+    con.append("elastic")
+if mode=="1":
+  mod1=input("Specimen type? <t> Polyp <g> Gastritis <b> Breast <enter> General")
+  if mod1=="t":
+    polysyn()
+  if mod1=="g":
+    gastritis()
+  if mod1=='b':
+    breastcore()
+  if mod1=="":
+    copydx()
+# Output
+for line in dxlines:
+  print(line, end="",file=g)
+#print("\n",file=g)
+if mode=="s":
+  for i in range(len(castlines)):
+    castlines[i]=re.sub("\.",":",castlines[i])
+
+if mode=="":
+  if form =="1":
+    txoutput(bt,fx,fr,sz,clrcon)
+    castlines[1]="     "+castlines[1]
+    for i in range(len(microlines)):
+      if re.search("Ref:",microlines[i]):
+        reflines=''.join(microlines[i:])   
+    microlines.clear()
+    microlines.append("\n     Microscopically, it shows \n\n")
+    microlines.append(reflines)
+  elif form =="2":
+    choutput(bt,fx,fr,sz,clrcon)
+else:
+  for line in macrolines:
+    print(line, end="",file=g)
+
+if mode=="r":
+  ref()
+
+
+print(microlines)
+
+for line in castlines:
+  print(line, end="",file=g)
+for line in microlines:
+  print(line, end="",file=g)  
+
+
+
+g.close()
