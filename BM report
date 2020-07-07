@@ -1,0 +1,75 @@
+#bone marrow format
+import re
+
+f=open("cbc.txt", mode='r')
+lines=f.readlines()
+ref=[]
+for line in lines:
+  if "HB" in line:
+    line=re.sub("  "," ",line[0:-13])
+    ref.append(line)
+  if "WBC" in line:
+    line=re.sub("  "," ",line[0:-12])
+    ref.append(line)
+  if "PLT" in line:
+    line=re.sub("  "," ",line[0:-11])
+    ref.append(line)
+  if "Blast" in line:
+    line=re.sub("  ","",line[0:-5])
+    ref.append(line)
+
+
+
+f.close()
+g=open("bmreport.txt", mode='w')
+
+length=input("Length= ? cm ")
+cell3=input ("(1) Hypercellular (2) Normocellular (3) Hypocellular ")
+if cell3=="1":
+  cell3="hypercellularity"
+elif cell3=="2":
+  cell3="nearly normal cellularity"
+elif cell3=="3":
+  cell3="hypocellularity"
+cellularity=input("Cellularity = ?% ")
+mer=input("M:E=? (1) 3:1 (2) >5:1 (or input other numbers)")
+if mer=="1":
+  mer="3:1"
+elif mer=="2":
+  mer=">5:1"
+
+medes=input("Description (1) decreased cells (2) myeloid hyperplasia (3) erythroid hyperplasia <enter> skip")
+if medes=="1":
+  medes=" with decrease of hematopoietic element. "
+elif medes=="2":
+  medes=" with significant myeloid hyperplasia. "
+elif medes=="3":
+  medes=" with significant erythroid hyperplasia. "
+else:
+  medes=". "
+megak=input("Megakaryocytes (0) decreased (1) adequate (2) increased (3) increased and abnormal <enter> skip")
+if megak=='0':
+  megak="decreased in quantity. "
+elif megak=="1":
+  megak="adequate. "
+elif megak=="2":
+  megak="increased in quantity. "
+elif megak=="3":
+  megak="increased in quantiy, abnormally clustered, and display dysplasia. "
+moredes=input("(1) The marrow spaces are replaced by \n (2) There is interstitial infiltrate of \n (3) There is nodular infiltrate of \n (4) There is paratrabecular infiltrate of")
+if moredes=="1":
+  moredes="The marrow spaces are replaced by "
+elif moredes=="2":
+  moredes="There is interstitial infiltrate of "
+elif moredes=="3":
+  moredes="There is nodular infiltrate of "
+elif moredes=="4":
+  moredes="There is paratrabecular infiltrate of "
+
+print ("Bone marrow, iliac crest, biopsy, \n\n",file=g)
+print("     The specimen is a bone marrow fragment, about "+length+" cm long, received from core biopsy.\nSubmitted in toto, one cassette.\n\n",file=g)
+print ("MICROSCOPIC FINDING\n     The bone marrow shows "+cell3+" with hematopoietic components accounting for about "+cellularity+"% of the marrow spaces, and M/E ratio of "+mer+ medes+"Megakaryocytes are "+megak+moredes, file=g)
+print ("\nRef: ",end="",file=g)
+for j in ref:
+  print (j, end=" ",file=g)
+g.close()
