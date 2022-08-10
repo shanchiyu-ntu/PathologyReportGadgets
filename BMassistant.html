@@ -1,0 +1,176 @@
+<html>
+<head> Bone marrow assistant. Created on 2022/8/5. Shan-Chi Yu. </head>
+
+<body>
+<h2>Bone marrow biopsy checklist</h2>
+ 
+<form id="inputform">
+<input type="reset" value="Reset">
+<div id="Diagnosisform">
+<h3> Diagnosis</h3>
+<label for ="diagnosis">Diagnosis </label>
+<textarea id="diagnosis" name="diagnosis" cols="80">Bone marrow, iliac crest, biopsy, </textarea>
+<label for ="diagnosisName">Diagnosis</label>
+<select id="diagnosisName" name="diagnosisName">
+        <option value="no evidence of lymphoma">no evidence of lymphoma</option>
+        <option value="hypocellular marrow">hypocellular marrow</option>
+        <option value="acute leukemia, favoring myeloid">acute leukemia, favoring myeloid</option>  
+        <option value="acute leukemia, favoring lymphoblastic">acute leukemia, favoring lymphoblastic </option>  
+        <option value="no evidence of neuroblastoma involvement">no evidence of neuroblastoma involvement</option>        
+        <option value="c/w myeloproliferative neoplasm">c/w myeloproliferative neoplasm</option>  
+        <option value="acute leukemia">acute leukemia</option>  
+        <option value="" selected></option>
+</select>
+</div>
+
+<div id="Grossform">
+<h3> Gross</h3> 
+<label for ="specimen_length">Specimen length (cm): </label>
+<input type="text" id="specimen_length" name="specimen_length">
+</div>
+
+<div id="Microform">
+<h3> Micro</h3> 
+<label for = "cellularity_h"></br> Cellularity, hyper or hypo? </label>
+<select id="cellularity_h" name="cellularity_h">
+            <option value="hypocellularity">Low</option>
+            <option value="nearly normal cellularity">Normal</option>
+            <option value="hypocellularity">High</option>    
+            <option value="" selected></option>
+</select>
+<label for ="cellularity">Cellularity (%): </label>
+<input type="text" id="cellularity" name="cellularity">
+<label for ="ME_ratio"></br> M:E=</label>
+<select id="ME_ratio" name="cellularity_h">
+            <option value="3:1" selected>3:1</option>
+            <option value="5:1">5:1</option>
+            <option value=">5:1"> >5:1</option>
+            <option value="1:1">1:1</option>    
+            <option value="1:3">1:3</option>
+            <option value=""> </option>   
+</select>
+<label for ="ME_stain">IHC stain</label>
+<select id="ME_stain" name="MPOCD71">
+            <option value=", confirmed by MPO immunostain">MPO</option>
+            <option value=", confirmed by MPO and CD71 immunostains">MPO+CD71</option>  
+            <option value="" selected> </option>   
+</select>
+<label for ="megakaryocyte">Megakaryocytes </label>
+<textarea id="megakaryocyte" name="megakaryocyte" cols="40">Megakaryocytes are adequate. </textarea>
+
+<label for ="reticulin">Reticulin stain </label>
+<textarea id="reticulin" name="reticulin" cols="40">Reticulin stain </textarea>
+</select>
+<label for ="reticulins">reticulin stain </label>
+<select id="reticulins" name="reticulins">
+            <option value="is pending. ">Reticulin stain is pending. </option>
+            <option value="shows no fibrosis. ">Reticulin stain shows no fibrosis. </option>              
+            <option value="" selected> </option>   
+</select>
+
+</br>
+<label  for ="freeinput"> Other input </label>
+<textarea id="freeinput" name="freeinput" cols="100" rows="5"></textarea> 
+</br>
+<input type="checkbox" id="Replaced" name="Replaced" value="The marrow spaces are replaced by . These cells are positive for and negative for">
+ <label>The marrow spaces are replaced by .</label>
+</br>
+<input type="checkbox" id="Positive_percent" name="Positive_percent" value="+ cells account for % of total mononuclear cells. ">
+<label>+ cells account for % of total mononuclear cells. </label>   
+<input type="checkbox" id="CD34CD117" name="CD34CD117" value="CD34 and CD117 immunostains show no increased immature cells. ">
+<label>CD34 and CD117 immunostains show no increased immature cells.</label>
+</br>
+<input type="checkbox" id="CD20" name="CD20" value="Rare CD20+ small cells are seen (%). ">
+<label>Rare CD20+ small cells are seen (%).</label>     
+<input type="checkbox" id="CD3" name="CD3" value="Scant CD3+ small cells are seen (%). ">
+<label>Scant CD3+ small cells are seen (%).</label>      
+<input type="checkbox" id="NoLymphoma" name="NoLymphoma" value="No evidence of lymphoma involvement is seen. ">
+<label>No evidence of lymphoma involvement is seen.</label>  
+</br>       
+<input type="checkbox" id="consistent" name="consistent" value="The picture is consistent with ">
+<label>The picture is consistent with </label>
+<input type="checkbox" id="pleasecorrelate" name="pleasecorrelate" value="Please correlate with ">
+<label>Please correlate with </label>
+</div>
+
+<div id="CBCform">
+<h3> CBC</h3>   
+<label for ="CBC">CBC (第四代報告系統 清單)</label>
+<textarea id="CBC" name="CBC" cols="40"></textarea>
+</div>
+ 
+<hr>
+<botton type="button" id="generateReport" onclick="processingdata()" style="color: blue;">Generate a report!</botton>
+</form>
+<hr>
+<div id="ReportOutput">
+    <h1>Report format</h1>
+    <p id="Diagnosis"> (Empty diagnosis) </p>
+    <p id="Gross"> (Empty Gross) </p>
+    <p id="Micro"> (Empty Micro) </p>
+    <p id="CBCoutput"> (Empty CBC) </p>
+</div>
+
+<script>
+    
+    function processingdata(){
+        diagnosisoutput();
+        grossoutput();
+        microOutput();
+        CBCoutput();
+        }
+
+    function diagnosisoutput(){
+        let diagnosis=document.getElementById("diagnosis").value;
+        let diagnosisName=document.getElementById("diagnosisName").value;
+        document.getElementById("Diagnosis").innerHTML=diagnosis+diagnosisName;
+        }
+
+    function grossoutput(){
+        let specimenlength=document.getElementById("specimen_length").value;
+        let grosstext="     The specimen is a bone marrow fragment, about "+specimenlength+" cm long, received from core biopsy.\n\nSubmitted in toto, one cassette (A1).";
+        document.getElementById("Gross").innerText=grosstext;
+        }
+
+    function microOutput(){
+        let cellularity_h=document.getElementById("cellularity_h").value;
+        let cellularity=document.getElementById("cellularity").value;
+        let ME=document.getElementById("ME_ratio").value;
+        let MEstain=document.getElementById("ME_stain").value;
+        let megakaryocyte=document.getElementById("megakaryocyte").value;
+        let reticulin=document.getElementById("reticulin").value;
+        let reticulins=document.getElementById("reticulins").value;
+        let freeinput=document.getElementById("freeinput").value ;
+        let Positive_percent=document.getElementById("Positive_percent");       
+        let CD34CD117=document.getElementById("CD34CD117"); 
+        let CD20=document.getElementById("CD20");  
+        let NoLymphoma=document.getElementById("NoLymphoma");
+        let microtext="MICROSCOPIC FINDING</br>     The bone marrow shows "+cellularity_h+" with hematopoietic components accounting for about "+cellularity+"% of the marrow spaces, and M/E ratio of "+ME+MEstain+". "+megakaryocyte+" "+reticulin+reticulins+" "+freeinput;
+        if (Replaced.checked){microtext+=Replaced.value;}
+        if (Positive_percent.checked){microtext+=Positive_percent.value;}
+        if (CD34CD117.checked){microtext+=CD34CD117.value;}
+        if (CD20.checked){microtext+=CD20.value;}
+        if (CD3.checked){microtext+=CD3.value;}    
+        if (NoLymphoma.checked){microtext+=NoLymphoma.value;}
+        if (consistent.checked){microtext=microtext+consistent.value;}
+        if (pleasecorrelate.checked){microtext=microtext+pleasecorrelate.value;}
+        document.getElementById("Micro").innerHTML=microtext;
+        }
+
+    function CBCoutput(){
+        let cbcraw=document.getElementById("CBC").value;
+        let cbcarray=cbcraw.split(/\s+/);
+        let labitem=["HB", "WBC", "PLT", "Blast", "Hb","Plt"];
+        let CBCtext="Ref:\nCBC: ";
+        for (let i=0;i<(cbcarray.length-2);i++){
+            for (let x of labitem){
+             if (cbcarray[i].includes(x)) {
+             CBCtext=CBCtext + cbcarray[i] + " "+ cbcarray[i+1]+" "+cbcarray[i+2]+"  ";}
+          }
+          }
+    document.getElementById("CBCoutput").innerHTML=CBCtext;
+        }
+</script>
+</body>
+</html>
+
